@@ -3,6 +3,6 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 # Asegúrate que este nombre coincida con tu archivo settings.py
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'apps.settings')
 
 application = get_wsgi_application()
