@@ -36,7 +36,7 @@ MIDDLEWARE = [
 ]
 
 # Enrutador principal
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'apps.urls'
 
 # Configuración de plantillas HTML
 TEMPLATES = [
