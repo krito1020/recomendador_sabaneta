@@ -25,7 +25,7 @@ def index(request):
         else:
             messages.error(request, 'No se pudo generar recomendaciones. Verifica la base o el texto ingresado.')
 
-    return render(request, 'index.html', {'recomendaciones': recomendaciones})
+    return render(request, 'recomendador/index.html', {'recomendaciones': recomendaciones})
 
 def registrar_comercio(request):
     if request.method == 'POST':
@@ -68,4 +68,4 @@ def registrar_comercio(request):
     else:
         form = ComercioForm()
 
-    return render(request, 'registro.html', {'form': form})
+    return render(request, 'recomendador/registro.html', {'form': form})
