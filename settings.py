@@ -1,11 +1,19 @@
-
 import os
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent
-SECRET_KEY = os.getenv("SECRET_KEY", "secret")
-DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+import dj_database_url
 
+# Ruta base del proyecto
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Clave secreta desde .env (asegúrate de definirla allí)
+SECRET_KEY = os.getenv('SECRET_KEY', 'Jose31499035+')
+
+# Debug desde .env
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+# Hosts permitidos (puedes ajustar según necesidad)
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
+# Aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -13,12 +21,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
-    'apps.recomendador',
+    'apps.recomendador',  # Tu app personalizada
 ]
 
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir archivos estáticos en producción
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -26,30 +35,43 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
+# Enrutador principal
 ROOT_URLCONF = 'urls'
-TEMPLATES = [{
-    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [BASE_DIR / 'apps/recomendador/templates'],
-    'APP_DIRS': True,
-    'OPTIONS': {
-        'context_processors': [
-            'django.template.context_processors.debug',
-            'django.template.context_processors.request',
-            'django.contrib.auth.context_processors.auth',
-            'django.contrib.messages.context_processors.messages',
-        ],
+
+# Configuración de plantillas HTML
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'apps/recomendador/templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
     },
-}]
+]
+
+# Configuración del servidor WSGI
 WSGI_APPLICATION = 'wsgi.application'
 
+# Configuración de base de datos para Railway PostgreSQL
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
+# Configuración de archivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'apps/recomendador/static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'apps/recomendador/static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Otras configuraciones
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
