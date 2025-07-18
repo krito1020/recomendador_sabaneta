@@ -1,13 +1,44 @@
-*.ipynb_checkpoints
-/*.ipynb_checkpoints
-._pycache_
-/*.zip
-/*.csv
-/*.pkl
-/*.xlsx
-/*.temp
-*.zip
-*.pyc
-*.pyo
-*.pyd
+# Entornos virtuales
+venv/
+env/
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+
+# Archivos temporales
+*.log
+*.temp
+*.tmp
+*.bak
+*.swp
+
+# Archivos de entorno
 .env
+.env.*
+
+# Archivos de Jupyter
+*.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# Archivos de bases de datos y datos locales
+*.sqlite3
+*.db
+*.csv
+*.xlsx
+*.pkl
+*.zip
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos estáticos recolectados
+staticfiles/
+
+# Archivos de build/deploy
+build/
+dist/
+
+# Ignorar node_modules si se usa JavaScript
+node_modules/
