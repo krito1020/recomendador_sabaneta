@@ -2,7 +2,7 @@ import os
 import dj_database_url
 
 # Ruta base del proyecto
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Configuración de base de datos flexible (Railway o local)
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'apps.wsgi.application'
 
 # Configuración de archivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(os.path.dirname(BASE_DIR), 'apps', 'recomendador', 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'apps', 'recomendador', 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Otras configuraciones
