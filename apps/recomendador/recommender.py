@@ -40,3 +40,7 @@ class RecomendadorEmpresas:
         similitudes = cosine_similarity(consulta, self.tfidf).flatten()
         indices = [i for i in similitudes.argsort()[::-1] if similitudes[i] >= min_similitud][:top_n]
         return self.df.iloc[indices].copy()
+
+resultados = recomendador.recomendar(consulta)
+print(resultados)
+recomendaciones = resultados.to_dict(orient='records')
