@@ -16,7 +16,7 @@ if DATABASE_URL:
         )
     }
 else:
-    # ✅ Fallback a SQLite local
+    # Fallback a SQLite local
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
