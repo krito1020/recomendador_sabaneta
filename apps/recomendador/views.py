@@ -72,7 +72,7 @@ def registrar_comercio(request):
                 comercio.nombre,
                 comercio.sector,
                 comercio.subsector,
-                comercio.articulos,
+                comercio.articulos.lower().strip(),
                 'Colombia',
                 'Antioquia',
                 'Sabaneta',
