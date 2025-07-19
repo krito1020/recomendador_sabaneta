@@ -19,6 +19,7 @@ def cargar_recomendador():
     if os.path.exists(EXCEL_PATH):
         try:
             recomendador = RecomendadorEmpresas(EXCEL_PATH)
+            print("✅ Recomendador recargado correctamente.")
         except Exception as e:
             print(f"⚠️ Error cargando recomendador: {e}")
             recomendador = None
@@ -42,6 +43,7 @@ def index(request):
             messages.error(request, 'No se pudo generar recomendaciones. Verifica la base o el texto ingresado.')
 
     return render(request, 'recomendador/index.html', {'recomendaciones': recomendaciones})
+
 
 def registrar_comercio(request):
     if request.method == 'POST':
