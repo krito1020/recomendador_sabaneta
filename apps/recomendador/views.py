@@ -29,7 +29,11 @@ def index(request):
     if request.method == 'POST':
         consulta = request.POST.get('consulta', '')
         if consulta and recomendador:
-            recomendaciones = recomendador.recomendar(consulta).to_dict(orient='records')
+            print(f">>> Consulta del usuario: {consulta}")  # 🟡 DEBUG
+            resultado = recomendador.recomendar(consulta)
+            print(f">>> Resultados encontrados: {len(resultado)}")  # 🟡 DEBUG
+            recomendaciones = resultado.to_dict(orient='records')
+            
             if not recomendaciones:
                 messages.warning(request, 'No se encontraron resultados para tu búsqueda.')
         else:
