@@ -57,7 +57,7 @@ TEMPLATES = [
 ]
 
 # Configuración del servidor WSGI
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'apps.wsgi.application'
 
 # Configuración de base de datos para Railway PostgreSQL
 DATABASES = {
