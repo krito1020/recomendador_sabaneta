@@ -10,10 +10,18 @@ import openpyxl
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCEL_PATH = os.path.join(BASE_DIR, 'apps', 'recomendador', 'data', 'base_actualizada.xlsx')
 
-# Cargar el recomendador solo si existe el archivo
+# Recomendador global
 recomendador = None
-if os.path.exists(EXCEL_PATH):
-    recomendador = RecomendadorEmpresas(EXCEL_PATH)
+
+# Función para cargar o recargar el modelo
+def cargar_recomendador():
+    global recomendador
+    if os.path.exists(EXCEL_PATH):
+        recomendador = RecomendadorEmpresas(EXCEL_PATH)
+
+# Carga inicial
+cargar_recomendador()
+
 
 def index(request):
     recomendaciones = None
@@ -22,10 +30,13 @@ def index(request):
         consulta = request.POST.get('consulta', '')
         if consulta and recomendador:
             recomendaciones = recomendador.recomendar(consulta).to_dict(orient='records')
+            if not recomendaciones:
+                messages.warning(request, 'No se encontraron resultados para tu búsqueda.')
         else:
             messages.error(request, 'No se pudo generar recomendaciones. Verifica la base o el texto ingresado.')
 
     return render(request, 'recomendador/index.html', {'recomendaciones': recomendaciones})
+
 
 def registrar_comercio(request):
     if request.method == 'POST':
@@ -61,6 +72,10 @@ def registrar_comercio(request):
             ])
 
             wb.save(EXCEL_PATH)
+
+            # Recargar el recomendador después de registrar
+            cargar_recomendador()
+
             messages.success(request, '¡Comercio registrado exitosamente!')
             return redirect('registro')
         else:
