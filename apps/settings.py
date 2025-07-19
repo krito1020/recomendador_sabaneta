@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'apps.wsgi.application'
 
 # Configuración de archivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'apps/recomendador/static')]
+STATICFILES_DIRS = [os.path.join(os.path.dirname(BASE_DIR), 'apps', 'recomendador', 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Otras configuraciones
