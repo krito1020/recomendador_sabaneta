@@ -64,17 +64,22 @@ def registrar_comercio(request):
                 ws = wb['BBDD'] if 'BBDD' in wb.sheetnames else wb.active
 
             ws.append([
+                '',  # NIT (vacío por ahora)
                 comercio.nombre,
                 comercio.sector,
                 comercio.subsector,
                 comercio.articulos,
+                'Colombia',         # País por defecto
+                'Antioquia',        # Departamento por defecto
+                'Sabaneta',         # Ciudad por defecto
                 comercio.direccion,
                 comercio.celular,
                 comercio.telefono,
                 comercio.link_facebook,
                 comercio.link_instagram,
             ])
-
+            
+            # Guarda los cambios en el archivo
             wb.save(EXCEL_PATH)
 
             # Recargar el recomendador después de registrar
