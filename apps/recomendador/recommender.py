@@ -31,10 +31,10 @@ class RecomendadorEmpresas:
         self.df['ARTICULOS'] = self.df['ARTICULOS'].str.lower().str.strip()
 
         # Vectorización con stopwords personalizadas
-        stopwords_personalizadas = text.ENGLISH_STOP_WORDS.union({
+        stopwords_personalizadas = list(text.ENGLISH_STOP_WORDS.union({
             'producto', 'productos', 'servicio', 'servicios',
             'venta', 'sabaneta', 'local', 'comercio'
-        })
+        }))
         self.vectorizador = TfidfVectorizer(stop_words=stopwords_personalizadas)
         self.tfidf = self.vectorizador.fit_transform(self.df['ARTICULOS'])
 
