@@ -4,6 +4,26 @@ import dj_database_url
 # Ruta base del proyecto
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Configuración de base de datos flexible (Railway o local)
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # ✅ Fallback a SQLite local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 # Clave secreta desde .env (asegúrate de definirla allí)
 SECRET_KEY = os.getenv('SECRET_KEY', 'Jose31499035+')
 
@@ -58,15 +78,6 @@ TEMPLATES = [
 
 # Configuración del servidor WSGI
 WSGI_APPLICATION = 'apps.wsgi.application'
-
-# Configuración de base de datos para Railway PostgreSQL
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
 
 # Configuración de archivos estáticos
 STATIC_URL = '/static/'
