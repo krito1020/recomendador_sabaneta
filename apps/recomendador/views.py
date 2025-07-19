@@ -5,36 +5,37 @@ from .recommender import RecomendadorEmpresas
 from django.contrib import messages
 import os
 import openpyxl
-import pandas as pd
 
-# Ruta absoluta segura para producción y Railway
+# Ruta segura
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCEL_PATH = os.path.join(BASE_DIR, 'apps', 'recomendador', 'data', 'base_actualizada.xlsx')
 
-# Recomendador global
+# Variable global del recomendador
 recomendador = None
 
-# Función para cargar o recargar el modelo
+# Función para recargar modelo
 def cargar_recomendador():
     global recomendador
     if os.path.exists(EXCEL_PATH):
-        recomendador = RecomendadorEmpresas(EXCEL_PATH)
+        try:
+            recomendador = RecomendadorEmpresas(EXCEL_PATH)
+        except Exception as e:
+            print(f"⚠️ Error cargando recomendador: {e}")
+            recomendador = None
 
-# Carga inicial
+# Cargar al inicio
 cargar_recomendador()
-
 
 def index(request):
     recomendaciones = None
 
     if request.method == 'POST':
-        consulta = request.POST.get('consulta', '')
+        consulta = request.POST.get('consulta', '').strip()
         if consulta and recomendador:
-            print(f">>> Consulta del usuario: {consulta}")  # 🟡 DEBUG
+            print(f">>> Consulta del usuario: {consulta}")
             resultado = recomendador.recomendar(consulta)
-            print(f">>> Resultados encontrados: {len(resultado)}")  # 🟡 DEBUG
+            print(f">>> Resultados encontrados: {len(resultado)}")
             recomendaciones = resultado.to_dict(orient='records')
-            
             if not recomendaciones:
                 messages.warning(request, 'No se encontraron resultados para tu búsqueda.')
         else:
@@ -42,44 +43,48 @@ def index(request):
 
     return render(request, 'recomendador/index.html', {'recomendaciones': recomendaciones})
 
-
 def registrar_comercio(request):
     if request.method == 'POST':
         form = ComercioForm(request.POST, request.FILES)
         if form.is_valid():
             comercio = form.save()
 
-            # Agregar también al archivo Excel
-            try:
+            # Crear archivo si no existe
+            nuevo_archivo = False
+            if not os.path.exists(EXCEL_PATH):
                 os.makedirs(os.path.dirname(EXCEL_PATH), exist_ok=True)
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = 'BBDD'
+                ws.append([
+                    'NIT', 'NOMBRE', 'SECTOR', 'SUBSECTOR', 'ARTICULOS',
+                    'PAIS', 'DEPARTAMENTO', 'CIUDAD', 'DIRECCIÓN',
+                    'CELULAR', 'TELÉFONO', 'FACEBOOK', 'INSTAGRAM'
+                ])
+                nuevo_archivo = True
+            else:
+                wb = openpyxl.load_workbook(EXCEL_PATH)
+                ws = wb['BBDD'] if 'BBDD' in wb.sheetnames else wb.active
 
-                nuevo_dato = {
-                    'NOMBRE': comercio.nombre,
-                    'SECTOR': comercio.sector,
-                    'SUBSECTOR': comercio.subsector,
-                    'ARTICULOS': comercio.articulos,
-                    'DIRECCIÓN': comercio.direccion,
-                    'CELULAR': comercio.celular,
-                    'TELÉFONO': comercio.telefono,
-                    'FACEBOOK': comercio.link_facebook,
-                    'INSTAGRAM': comercio.link_instagram
-                }
+            # Añadir fila
+            ws.append([
+                '',  # NIT vacío
+                comercio.nombre,
+                comercio.sector,
+                comercio.subsector,
+                comercio.articulos,
+                'Colombia',
+                'Antioquia',
+                'Sabaneta',
+                comercio.direccion,
+                comercio.celular,
+                comercio.telefono,
+                comercio.link_facebook,
+                comercio.link_instagram
+            ])
+            wb.save(EXCEL_PATH)
 
-                # Cargar o crear archivo Excel
-                if os.path.exists(EXCEL_PATH):
-                    df = pd.read_excel(EXCEL_PATH, sheet_name='BBDD')
-                    df = pd.concat([df, pd.DataFrame([nuevo_dato])], ignore_index=True)
-                else:
-                    df = pd.DataFrame([nuevo_dato])
-
-                with pd.ExcelWriter(EXCEL_PATH, engine='openpyxl', mode='w') as writer:
-                    df.to_excel(writer, sheet_name='BBDD', index=False)
-
-            except Exception as e:
-                print(f"⚠️ Error al guardar en Excel: {e}")
-                messages.warning(request, 'Se guardó el comercio en la base de datos, pero hubo un error al actualizar el archivo Excel.')
-
-            # Recargar modelo
+            # Recargar modelo actualizado
             cargar_recomendador()
 
             messages.success(request, '¡Comercio registrado exitosamente!')
